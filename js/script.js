@@ -6,6 +6,7 @@
  * CONSTRUCTORS
  * ANIMATION FUNCTIONS
  * VARIABLES
+ * FUNCTION EXECUTION
  *
  */
 
@@ -63,6 +64,44 @@ const animation = (() => {
 		}
 	}
 
+	// ANIMATION FUNCTIONS
+
+	const spawnProjectile = () => {
+		let x = base.x
+		let y = base.y
+		let v = getRandomInt(5, 10)
+		let a = cannon.a
+		let len = cannon.length / 2
+		let color = 'white'
+		projectiles.push(new Projectile(x, y, v, a, len, color))
+	}
+
+	const resize = () => {
+		cw = innerWidth
+		ch = innerHeight
+		base.x = cw / 2
+		base.y = ch
+		canvas.width = cw
+		canvas.height = ch
+	}
+
+	const init = () => {
+		resize()
+		window.addEventListener('resize', resize)
+		window.addEventListener('mousemove', e => {
+			mouse.x = e.x
+			mouse.y = e.y
+		})
+		window.addEventListener('click', spawnProjectile)
+	}
+
+	const animate = () => {
+		requestAnimationFrame(animate)
+		c.clearRect(0, 0, cw, ch)
+		cannon.update()
+		projectiles.map(p => p.update())
+	}
+
 	// VARIABLES
 
 	const canvas = document.getElementById('canvas')
@@ -74,4 +113,7 @@ const animation = (() => {
 	let cw = innerWidth
 	let ch = innerHeight
 
+	// FUNCTION EXECUTION
+	init()
+	animate()
 })()
