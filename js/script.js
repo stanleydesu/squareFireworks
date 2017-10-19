@@ -1,74 +1,77 @@
-"use strict";
+"use strict"
 
 /* CODE STRUCTURE:
  *
+ * UTILITY FUNCTIONS
  * CONSTRUCTORS
+ * ANIMATION FUNCTIONS
  * VARIABLES
  *
  */
 
 const animation = (() => {
-// CONSTRUCTORS
+
+	// UTILITY FUNCTIONS
+
+	const getRandomInt = (min, max) => Math.floor(min + Math.random() * (max - min + 1))
+
+	// CONSTRUCTORS
 
 	class Cannon {
-		constructor(length, color) {
-			this.length = length;
-			this.color = color;
-			this.a;
-			this.baseX;
-			this.baseY;
-			this.endX;
-			this.endY;
+		constructor (length, color) {
+			this.length = length
+			this.color = color
+			this.a
 		}
-		update() {
-			this.a = Math.atan2(base.y - mouse.y, mouse.x - base.x);
-			this.baseX = base.x;
-			this.baseY = base.y;
-			this.endX = base.x + this.length * Math.cos(this.a);
-			this.endY =	base.y - this.length * Math.sin(this.a);
-			this.draw();
+		update () {
+			this.a = Math.atan2(base.y - mouse.y, mouse.x - base.x)
+			this.draw()
 		}
-		draw() {
-			c.beginPath();
-			c.moveTo(this.baseX, this.baseY);
-			c.lineTo(this.endX, this.endY);
-			c.lineWidth = 10;
-			c.strokeStyle = this.color;
-			c.stroke();
+		draw () {
+			c.save()
+			c.translate(base.x, base.y)
+			c.rotate(-this.a + Math.PI / 2)
+			c.fillStyle = this.color
+			c.fillRect(-this.length / 2, -this.length / 2, this.length, this.length)
+			c.fillRect(-this.length / 4, -this.length * 1.2, this.length / 2, this.length / 2)
+			c.restore()
 		}
 	}
 
 	// constructor for projectiles
 	class Projectile {
-		constructor(x, y, v, a, r, color) {
-			this.x = x;
-			this.y = y;
-			this.vx = v;
-			this.vy = v;
-			this.a = a;
-			this.r = r;
-			this.g = gravity;
-			this.color = color;
+		constructor (x, y, v, a, len, color) {
+			this.x = x
+			this.y = y
+			this.v = v
+			this.a = a
+			this.len = len
+			this.color = color
 		}
-		update() {
-			this.vy -= this.g;
-			this.x += this.vx * Math.cos(this.a);
-			this.y -= this.vy * Math.sin(this.a);
-			this.draw();
+		update () {
+			this.x += this.v * Math.cos(this.a)
+			this.y -= this.v * Math.sin(this.a)
+			this.draw()
 		}
-		draw() {
-			c.beginPath();
-			c.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-			c.fillStyle = this.color;
-			c.fill();
+		draw () {
+			c.save()
+			c.translate(this.x, this.y)
+			c.rotate(-this.a)
+			c.fillStyle = this.color
+			c.fillRect(-this.len / 2, -this.len / 2, this.len, this.len)
+			c.restore()
 		}
 	}
-	
+
 	// VARIABLES
 
-	const canvas = document.getElementById('canvas');
-	const c = canvas.getContext('2d');
-	const mouse = { x: innerWidth / 2, y: innerHeight / 2 };
-	const base = { x: innerWidth / 2, y: innerHeight };
-	const gravity = 2;
-})();
+	const canvas = document.getElementById('canvas')
+	const c = canvas.getContext('2d')
+	const mouse = { x: innerWidth / 2, y: innerHeight / 2 }
+	const base = { x: innerWidth / 2, y: innerHeight }
+	const cannon = new Cannon(30, 'white')
+	const projectiles = []
+	let cw = innerWidth
+	let ch = innerHeight
+
+})()
