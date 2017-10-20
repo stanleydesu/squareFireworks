@@ -22,7 +22,7 @@ const animation = (() => {
 		constructor (length, color) {
 			this.length = length
 			this.color = color
-			this.a
+			this.a = Math.atan2(base.y - mouse.y, mouse.x - base.x)
 		}
 		update () {
 			this.a = Math.atan2(base.y - mouse.y, mouse.x - base.x)
@@ -34,24 +34,32 @@ const animation = (() => {
 			c.rotate(-this.a + Math.PI / 2)
 			c.fillStyle = this.color
 			c.fillRect(-this.length / 2, -this.length / 2, this.length, this.length)
-			c.fillRect(-this.length / 4, -this.length * 1.2, this.length / 2, this.length / 2)
+			// c.fillRect(-this.length / 4, -this.length * 1.2, this.length / 2, this.length / 2)
 			c.restore()
 		}
 	}
 
 	// constructor for projectiles
 	class Projectile {
-		constructor (x, y, v, a, len, color) {
+		constructor (x, y, v, len, color) {
 			this.x = x
 			this.y = y
 			this.v = v
-			this.a = a
 			this.len = len
 			this.color = color
+			this.a = Math.atan2(base.y - mouse.y, mouse.x - base.x)
+			this.hasLaunched
+		}
+		launch () {
+			this.hasLaunched = true
 		}
 		update () {
-			this.x += this.v * Math.cos(this.a)
-			this.y -= this.v * Math.sin(this.a)
+			if (this.hasLaunched) {
+				this.x += this.v * Math.cos(this.a)
+				this.y -= this.v * Math.sin(this.a)
+			} else {
+				this.a = Math.atan2(base.y - mouse.y, mouse.x - base.x)
+			}
 			this.draw()
 		}
 		draw () {
@@ -70,10 +78,9 @@ const animation = (() => {
 		let x = base.x
 		let y = base.y
 		let v = getRandomInt(5, 10)
-		let a = cannon.a
 		let len = cannon.length / 2
 		let color = 'white'
-		projectiles.push(new Projectile(x, y, v, a, len, color))
+		projectiles.push(new Projectile(x, y, v, len, color))
 	}
 
 	const resize = () => {
@@ -92,7 +99,13 @@ const animation = (() => {
 			mouse.x = e.x
 			mouse.y = e.y
 		})
-		window.addEventListener('click', spawnProjectile)
+		window.addEventListener('click', function () {
+			spawnProjectile()
+			if (!projectiles[0].hasLaunched) {
+				projectiles[0].launch()
+			}
+		})
+
 	}
 
 	const animate = () => {
