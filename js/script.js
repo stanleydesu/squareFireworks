@@ -96,8 +96,8 @@ const animation = (() => {
 			mouse.x = e.x
 			mouse.y = e.y
 		})
-		window.addEventListener('click', function () {
-			if (projectiles.length === 0) spawnProjectile()
+		window.addEventListener('keydown', e => {
+			if (e.which === 32) spawnProjectile()
 		})
 	}
 
@@ -106,7 +106,6 @@ const animation = (() => {
 		c.clearRect(0, 0, cw, ch)
 		cannon.update()
 		projectiles.map((p, i, arr) => {
-			console.log(arr.length)
 			isOutsideScreen(p.x, p.y, p.len) ? arr.splice(i, 1) : p.update()
 		})
 	}
