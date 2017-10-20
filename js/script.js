@@ -16,6 +16,11 @@ const animation = (() => {
 
 	const getRandomInt = (min, max) => Math.floor(min + Math.random() * (max - min + 1))
 
+	const isOutsideScreen = (x, y, size) => {
+		return x + size < 0 || x - size > cw ||
+					 y + size < 0 || y - size > ch
+	}
+
 	// CONSTRUCTORS
 
 	class Cannon {
@@ -48,18 +53,10 @@ const animation = (() => {
 			this.len = len
 			this.color = color
 			this.a = Math.atan2(base.y - mouse.y, mouse.x - base.x)
-			this.hasLaunched
-		}
-		launch () {
-			this.hasLaunched = true
 		}
 		update () {
-			if (this.hasLaunched) {
-				this.x += this.v * Math.cos(this.a)
-				this.y -= this.v * Math.sin(this.a)
-			} else {
-				this.a = Math.atan2(base.y - mouse.y, mouse.x - base.x)
-			}
+			this.x += this.v * Math.cos(this.a)
+			this.y -= this.v * Math.sin(this.a)
 			this.draw()
 		}
 		draw () {
@@ -100,19 +97,18 @@ const animation = (() => {
 			mouse.y = e.y
 		})
 		window.addEventListener('click', function () {
-			spawnProjectile()
-			if (!projectiles[0].hasLaunched) {
-				projectiles[0].launch()
-			}
+			if (projectiles.length === 0) spawnProjectile()
 		})
-
 	}
 
 	const animate = () => {
 		requestAnimationFrame(animate)
 		c.clearRect(0, 0, cw, ch)
 		cannon.update()
-		projectiles.map(p => p.update())
+		projectiles.map((p, i, arr) => {
+			console.log(arr.length)
+			isOutsideScreen(p.x, p.y, p.len) ? arr.splice(i, 1) : p.update()
+		})
 	}
 
 	// VARIABLES
