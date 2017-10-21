@@ -75,7 +75,7 @@ const animation = (() => {
 		let y = base.y
 		let v = getRandomInt(5, 10)
 		let len = cannon.length / 2
-		let color = colors[getRandomInt(0, colors.length)]
+		let color = colors[getRandomInt(0, colors.length - 1)]
 		projectiles.push(new Projectile(x, y, v, len, color))
 	}
 
@@ -122,7 +122,7 @@ const animation = (() => {
 	];
 	const mouse = { x: innerWidth / 2, y: innerHeight / 2 }
 	const base = { x: innerWidth / 2, y: innerHeight }
-	const cannon = new Cannon(30, colors[getRandomInt(0, colors.length)])
+	const cannon = new Cannon(30, colors[getRandomInt(0, colors.length - 1)])
 	let projectiles = []
 	let cw = innerWidth
 	let ch = innerHeight
