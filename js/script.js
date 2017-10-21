@@ -39,7 +39,6 @@ const animation = (() => {
 			c.rotate(-this.a + Math.PI / 2)
 			c.fillStyle = this.color
 			c.fillRect(-this.length / 2, -this.length / 2, this.length, this.length)
-			// c.fillRect(-this.length / 4, -this.length * 1.2, this.length / 2, this.length / 2)
 			c.restore()
 		}
 	}
@@ -76,7 +75,7 @@ const animation = (() => {
 		let y = base.y
 		let v = getRandomInt(5, 10)
 		let len = cannon.length / 2
-		let color = 'white'
+		let color = colors[getRandomInt(0, colors.length)]
 		projectiles.push(new Projectile(x, y, v, len, color))
 	}
 
@@ -103,21 +102,28 @@ const animation = (() => {
 
 	const animate = () => {
 		requestAnimationFrame(animate)
-		c.clearRect(0, 0, cw, ch)
+		c.fillStyle = 'rgba(0, 0, 0, 1)'
+		c.fillRect(0, 0, cw, ch)
 		cannon.update()
-		projectiles.map((p, i, arr) => {
-			isOutsideScreen(p.x, p.y, p.len) ? arr.splice(i, 1) : p.update()
-		})
+		projectiles = projectiles.filter(p => !isOutsideScreen(p.x, p.y, p.len))
+		projectiles.map(p => p.update())
 	}
 
 	// VARIABLES
 
 	const canvas = document.getElementById('canvas')
 	const c = canvas.getContext('2d')
+	const colors = [
+	'rgb(0, 48, 90)',
+	'rgb(0, 75, 141)',
+	'rgb(0, 116, 217)',
+	'rgb(65, 147, 217)',
+	'rgb(122, 186, 242)',
+	];
 	const mouse = { x: innerWidth / 2, y: innerHeight / 2 }
 	const base = { x: innerWidth / 2, y: innerHeight }
-	const cannon = new Cannon(30, 'white')
-	const projectiles = []
+	const cannon = new Cannon(30, colors[getRandomInt(0, colors.length)])
+	let projectiles = []
 	let cw = innerWidth
 	let ch = innerHeight
 
