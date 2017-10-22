@@ -45,15 +45,18 @@ const animation = (() => {
 
 	// constructor for projectiles
 	class Projectile {
-		constructor (x, y, v, len, color) {
+		constructor (x, y, v, a, len, color, canExplode) {
 			this.x = x
 			this.y = y
 			this.v = v
+			this.a = a
 			this.len = len
 			this.color = color
-			this.a = Math.atan2(base.y - mouse.y, mouse.x - base.x)
+			this.canExplode = canExplode
+			this.lifeTime = 1
 		}
 		update () {
+			this.lifeTime -= 0.05
 			this.x += this.v * Math.cos(this.a)
 			this.y -= this.v * Math.sin(this.a)
 			this.draw()
@@ -70,13 +73,20 @@ const animation = (() => {
 
 	// ANIMATION FUNCTIONS
 
-	const spawnProjectile = () => {
-		let x = base.x
-		let y = base.y
+	// spawns a projectile at position x and y
+	// a (angle) is an optional argument optional
+	const spawnProjectile = (x, y, a, canExplode) => {
 		let v = getRandomInt(5, 10)
-		let len = cannon.length / 2
+		a = a || (Math.random() * Math.PI * 2)
+		let len = 15
 		let color = colors[getRandomInt(0, colors.length - 1)]
-		projectiles.push(new Projectile(x, y, v, len, color))
+		projectiles.push(new Projectile(x, y, v, a, len, color, canExplode))
+	}
+
+	const spawnExplosion = (x, y) => {
+		for (let i = 0; i < 20; ++i) {
+			spawnProjectile(x, y, 0, false)
+		}
 	}
 
 	const resize = () => {
@@ -96,7 +106,13 @@ const animation = (() => {
 			mouse.y = e.y
 		})
 		window.addEventListener('keydown', e => {
-			if (e.which === 32) spawnProjectile()
+			if (e.which === 32) {
+				let x = base.x;
+				let y = base.y;
+				let a = Math.atan2(base.y - mouse.y, mouse.x - base.x)
+				let canExplode = true
+				spawnProjectile(x, y, a, canExplode)
+			}
 		})
 	}
 
@@ -105,8 +121,11 @@ const animation = (() => {
 		c.fillStyle = 'rgba(0, 0, 0, 1)'
 		c.fillRect(0, 0, cw, ch)
 		cannon.update()
-		projectiles = projectiles.filter(p => !isOutsideScreen(p.x, p.y, p.len))
-		projectiles.map(p => p.update())
+		projectiles.map(p => {
+			p.update()
+			if (p.lifeTime < 0 && p.canExplode) spawnExplosion(p.x, p.y)
+		})
+		projectiles = projectiles.filter(p => p.lifeTime > 0)
 	}
 
 	// VARIABLES
