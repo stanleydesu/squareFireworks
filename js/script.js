@@ -53,7 +53,7 @@ const animation = (() => {
 			this.len = len
 			this.color = color
 			this.canExplode = canExplode
-			this.lifeTime = 1
+			this.lifeTime = canExplode ? getRandomInt(1, 4) : 2
 		}
 		update () {
 			this.lifeTime -= 0.05
@@ -65,6 +65,7 @@ const animation = (() => {
 			c.save()
 			c.translate(this.x, this.y)
 			c.rotate(-this.a)
+			c.globalAlpha = this.lifeTime > 0 ? this.lifeTime : 0
 			c.fillStyle = this.color
 			c.fillRect(-this.len / 2, -this.len / 2, this.len, this.len)
 			c.restore()
