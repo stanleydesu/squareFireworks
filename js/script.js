@@ -48,7 +48,8 @@ const animation = (() => {
 		constructor (x, y, v, a, len, color, canExplode) {
 			this.x = x
 			this.y = y
-			this.v = v
+			this.vx = v
+			this.vy = v
 			this.a = a
 			this.len = len
 			this.color = color
@@ -57,8 +58,8 @@ const animation = (() => {
 		}
 		update () {
 			this.lifeTime -= 0.05
-			this.x += this.v * Math.cos(this.a)
-			this.y -= this.v * Math.sin(this.a)
+			this.x += this.vx * Math.cos(this.a)
+			this.y -= this.vy * Math.sin(this.a)
 			this.draw()
 		}
 		draw () {
@@ -75,9 +76,9 @@ const animation = (() => {
 	// ANIMATION FUNCTIONS
 
 	// spawns a projectile at position x and y
-	// a (angle) is an optional argument optional
+	// with angle a or randomly generated angle
 	const spawnProjectile = (x, y, a, canExplode) => {
-		let v = getRandomInt(5, 10)
+		let v = getRandomInt(5, 15)
 		a = a || (Math.random() * Math.PI * 2)
 		let len = 15
 		let color = colors[getRandomInt(0, colors.length - 1)]
@@ -115,6 +116,13 @@ const animation = (() => {
 				spawnProjectile(x, y, a, canExplode)
 			}
 		})
+		window.addEventListener('click', () => {
+			let x = base.x;
+			let y = base.y;
+			let a = Math.atan2(base.y - mouse.y, mouse.x - base.x)
+			let canExplode = true
+			spawnProjectile(x, y, a, canExplode)
+		})
 	}
 
 	const animate = () => {
@@ -134,12 +142,11 @@ const animation = (() => {
 	const canvas = document.getElementById('canvas')
 	const c = canvas.getContext('2d')
 	const colors = [
-	'rgb(0, 48, 90)',
-	'rgb(0, 75, 141)',
-	'rgb(0, 116, 217)',
-	'rgb(65, 147, 217)',
-	'rgb(122, 186, 242)',
-	];
+	'rgb(242, 193, 102)', 
+	'rgb(242, 134, 39)',
+	'rgb(217, 63, 7)',
+	'rgb(140, 29, 4)'
+	]
 	const mouse = { x: innerWidth / 2, y: innerHeight / 2 }
 	const base = { x: innerWidth / 2, y: innerHeight }
 	const cannon = new Cannon(30, colors[getRandomInt(0, colors.length - 1)])
@@ -148,6 +155,7 @@ const animation = (() => {
 	let ch = innerHeight
 
 	// FUNCTION EXECUTION
+	
 	init()
 	animate()
 })()
