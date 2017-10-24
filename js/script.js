@@ -157,5 +157,8 @@ const animation = (() => {
 	// FUNCTION EXECUTION
 	
 	init()
-	animate()
+	
+	return { animate }
 })()
+
+animation.animate()
