@@ -95,7 +95,7 @@ const animation = (() => {
 		cw = innerWidth
 		ch = innerHeight
 		base.x = cw / 2
-		base.y = ch
+		base.y = ch / 2
 		canvas.width = cw
 		canvas.height = ch
 	}
